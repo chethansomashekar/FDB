@@ -16,7 +16,7 @@
         android:textSize="20dp"
         android:textStyle="bold"
         android:layout_alignParentTop="true"
-        android:layout_width="250dp"
+        android:layout_width="300dp"
         android:layout_height="30dp" />
     <ImageButton
         android:id="@+id/check"
@@ -24,9 +24,5 @@
         android:layout_height="30dp"
         android:layout_toRightOf="@+id/Name"
         android:src="@drawable/ic_action_name"/>
-
-
-
-
 
 </RelativeLayout>

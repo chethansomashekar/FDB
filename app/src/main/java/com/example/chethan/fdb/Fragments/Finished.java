@@ -1,16 +1,18 @@
 package com.example.chethan.fdb.Fragments;
 
+import android.app.Activity;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.chethan.fdb.Adapter.ListAdapter2;
-import com.example.chethan.fdb.Data.Person;
+import com.example.chethan.fdb.Adapter.FinishedAdapter;
+import com.example.chethan.fdb.Data.DataList;
 import com.example.chethan.fdb.DataBase.DBAdapter;
 import com.example.chethan.fdb.R;
 
@@ -21,85 +23,54 @@ import java.util.ArrayList;
  */
 
 public class Finished extends Fragment {
-    RecyclerView recyclerView;
-//    FragmentActivity mActivity;
-//    DBAdapter dbAdapter;
+    private RecyclerView recyclerView;
+    private FinishedAdapter adapter;
+    private FragmentActivity mActivity;
+    private DBAdapter dbAdapter;
+    private ArrayList<DataList> list ;
 
-    ListAdapter2 adapter;
-//    MainActivity main =new MainActivity();
-    ArrayList<Person> List = new ArrayList<>();
+    public Finished(DBAdapter dbAdapter, ArrayList<DataList> finishedList) {
+        this.dbAdapter=dbAdapter;
+        this.list= finishedList;
+    }
 
-
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        getActivity();
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        this.mActivity = (FragmentActivity) activity;
+        setRetainInstance(true);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.finshed, container, false);
-        Pending pending = new Pending();
-        pending.getActivity();
         recyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerview2);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        adapter = new ListAdapter2(getActivity(), List);
-//        Pending pending = new Pending();
-//        pending.onResume();
-
-
-        retrieve2();
+        adapter = new FinishedAdapter(getActivity(), list,dbAdapter);
+        retrieveFinished();
+        //((MainActivity)mActivity).finishedRetrieve();
+       // recyclerView.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
         return rootView;
     }
 
-
-
-    @Override
-    public void onResume() {
-        super.onResume();
-       retrieve2();
-
-    }
-
-    private void retrieve2() {
-        List.clear();
-
-        DBAdapter db = new DBAdapter(getActivity());
-        db.openDB();
-//        Person person = List.get();
-//        int id = person.getID();
-//        db.updatedata(id);
-
-        Cursor c = db.getAllPlayers2();
-        // adapter.notifyDataSetChanged();
-
-
+    private void retrieveFinished() {
+        list.clear();
+        dbAdapter.openDB();
+        Cursor c = dbAdapter.getFinishedData();
         while (c.moveToNext()) {
             int id = c.getInt(0);
             String name = c.getString(1);
-
-            Person p = new Person(id, name);
-
-//            adapter.notifyDataSetChanged();
-            List.add(p);
-
-
+            DataList p = new DataList(id, name);
+            list.add(p);
         }
-        adapter.notifyDataSetChanged();
-/*
-        //CHECK IF ARRAYLIST ISNT EMPTY
-        if (!(List.size() < 1)) {
-
-            recyclerView.setAdapter(adapter);
-
-        }*/
-        data();
-
-        db.closeDB();
+        setAdapter();
+        dbAdapter.closeDB();
     }
 
-    public void data() {
-        if (!(List.size() < 1)) {
+    public void setAdapter() {
+        if (!(list.size() < 1)) {
             recyclerView.setAdapter(adapter);
 
         }
