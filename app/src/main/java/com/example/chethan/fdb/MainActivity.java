@@ -51,8 +51,10 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent intent = new Intent(MainActivity.this, EditPage.class);
                 startActivity(intent);
+                finish();
             }
         });
+
        // String editableText= getIntent().getStringExtra("editableText");
        // save(editableText);
     }
